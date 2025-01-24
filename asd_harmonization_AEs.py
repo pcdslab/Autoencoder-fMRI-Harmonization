@@ -31,6 +31,7 @@ from neuroCombat import neuroCombat, neuroCombatFromTraining
 from numpy import savetxt
 from sklearn.naive_bayes import GaussianNB
 from sklearn.decomposition import PCA
+from config import *
 
 # Set a random seed value
 seed_value = 42
@@ -67,6 +68,11 @@ ap.add_argument(
 ap.add_argument(
     "-g", "--gender", type=bool, default=False, help="to add gender to ComBat"
 )
+
+ap.add_argument(
+    "-u", "--run_combat", type=bool, default=False, help="to run ComBat or not"
+)
+
 ap.add_argument("-a", "--age", type=bool, default=False, help="to add age to ComBat")
 
 ap.add_argument(
@@ -89,7 +95,7 @@ ap.add_argument(
 
 args = vars(ap.parse_args())
 
-path = args["path"]
+path = SAMPLE_PATH
 output = args["output"]
 p_fold = args["fold"]
 centers = args["centers"]
@@ -118,7 +124,8 @@ p_mode = "percenter"
 p_augmentation = False
 
 # Change this to run combat or not
-run_combat = False
+run_combat = args["run_combat"]
+
 # p_Method = "ASD-Standalone-AE"
 # p_Method = "ASD-Standalone-AE-4-centers"
 # p_Method = "ASD-ml"
@@ -148,10 +155,7 @@ def get_key(filename):
     return key
 
 
-data_main_path = (
-    "/lclhome/falmu027/datasets/asd/fmri_rois_200"  # cc200'#path to time series data
-)
-flist = os.listdir(data_main_path)
+flist = os.listdir(DATA_PATH)
 print(len(flist))
 
 for f in range(len(flist)):
@@ -159,7 +163,7 @@ for f in range(len(flist)):
 
 
 df_labels = pd.read_csv(
-    "/lclhome/falmu027/datasets/asd/Phenotypic_V1_0b_preprocessed1.csv"
+    PHENO_PATH
 )  # path
 
 df_labels.DX_GROUP = df_labels.DX_GROUP.map({1: 1, 2: 0})
@@ -183,9 +187,9 @@ def get_label(filename):
 
 def get_corr_data(filename):
     # print(filename)
-    for file in os.listdir(data_main_path):
+    for file in os.listdir(DATA_PATH):
         if file.startswith(filename):
-            df = pd.read_csv(os.path.join(data_main_path, file), sep="\t")
+            df = pd.read_csv(os.path.join(DATA_PATH, file), sep="\t")
 
     with np.errstate(invalid="ignore"):
         corr = np.nan_to_num(np.corrcoef(df.T))
@@ -195,9 +199,9 @@ def get_corr_data(filename):
 
 
 def get_corr_matrix(filename):
-    for file in os.listdir(data_main_path):
+    for file in os.listdir(DATA_PATH):
         if file.startswith(filename):
-            df = pd.read_csv(os.path.join(data_main_path, file), sep="\t")
+            df = pd.read_csv(os.path.join(DATA_PATH, file), sep="\t")
     with np.errstate(invalid="ignore"):
         corr = np.nan_to_num(np.corrcoef(df.T))
         return corr
@@ -2473,7 +2477,7 @@ if p_Method == "ASD-ml-combine-two-centers-asd-vs-hc":
         # "all",
         "first-asd",
         "second-asd",
-        "asd-center-as-class",
+        #"asd-center-as-class",
     ]
 
     num_corr = len(all_corr[flist[0]][0])
@@ -2545,10 +2549,8 @@ if p_Method == "ASD-ml-combine-two-centers-asd-vs-hc":
             writer.writeheader()
             first_run = False
             
-       
-        #TODO Here we run AEs
-        
-        run_combat = False
+               
+        # run_combat = False
         # for run_combat in [False, True]:
         print("========================")
         print("run_combat: ", run_combat, "\n")
@@ -2589,74 +2591,6 @@ if p_Method == "ASD-ml-combine-two-centers-asd-vs-hc":
                 print("n_lat:", n_lat)
                 
                 
-                # train_loader = get_loader(
-                #     data=new_data,
-                #     samples_list=train_samples,
-                #     batch_size=batch_size,
-                #     mode="train",
-                #     augmentation=False,
-                #     aug_factor=aug_factor,
-                #     num_neighbs=num_neighbs,
-                #     eig_data=eig_data,
-                #     similarity_fn=sim_function,
-                #     verbose=verbose,
-                #     regions=regions_inds,
-                #     num_corr=num_corr,
-                #     scanners=scanners,
-                #     estimator=None,
-                # )
-
-                # test_loader = get_loader(
-                #     data=new_data,
-                #     samples_list=test_samples,
-                #     batch_size=batch_size,
-                #     mode="test",
-                #     augmentation=False,
-                #     verbose=verbose,
-                #     regions=regions_inds,
-                #     num_corr=num_corr,
-                #     scanners=scanners,
-                #     estimator=None,
-                # )
-                
-                
-                # if ae_type == "AE":
-                #     model = AE(
-                #         tied=False,
-                #         num_inputs=num_inpp,
-                #         num_latent=n_lat,
-                #     )
-                # elif ae_type == "TAE":
-                #     model = AE(
-                #         tied=True,
-                #         num_inputs=num_inpp,
-                #         num_latent=n_lat,
-                #     )
-                # elif ae_type == "SAE":
-                #     model = SAE(
-                #         n_features=num_inpp,
-                #         n_lat=n_lat,
-                #     )
-                # elif ae_type == "DAE":
-                #     model = DAE(input_size=num_inpp)
-                # else:
-                #     # model = DAE(input_size=num_inpp)
-                #     model = VAE(input_size=num_inpp, latent_size=n_lat, hidden_size=1000)
-                    
-                # model.to(device)
-                # criterion_ae = nn.MSELoss(reduction="sum")
-                # optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate_ae)
-                # optimizer = optim.SGD(
-                #     [
-                #         {"params": model.fc_encoder.parameters(), "lr": learning_rate_ae},
-                #         {"params": model.classifier.parameters(), "lr": learning_rate_clf},
-                #     ],
-                #     momentum=0.9,
-                # )
-
-                # trained_model = train_ae(model, num_epochs, train_loader, ae_type)
-                # print("trained model done ")
-                
                 
                 train_data = []
                 train_labels = []
@@ -2671,33 +2605,6 @@ if p_Method == "ASD-ml-combine-two-centers-asd-vs-hc":
                     test_data.append(all_corr[i][0])
                     test_labels.append(all_corr[i][1])
                 
-                # loop through train loader and append the data after we pass it to the model
-                # trained_model.eval()
-                # with torch.no_grad():
-                #     for i, (batch_x, batch_y) in enumerate(train_loader):
-                #         if len(batch_x) != batch_size:
-                #             continue
-                #         data, target = batch_x.to(device), batch_y.to(device)
-                #         if ae_type == "VAE":
-                #             _, output, _, _ = trained_model(data)
-                #         else:
-                #             _, output = trained_model(data)
-                #         train_data.extend(output.detach().cpu().numpy().tolist())
-                #         train_labels.extend(target.detach().cpu().numpy().tolist())
-                # # print("train loader done")
-                # # loop through test loader and append the data after we pass it to the model
-                # trained_model.eval()
-                # with torch.no_grad():
-                #     for i, (batch_x, batch_y) in enumerate(test_loader):
-                #         if len(batch_x) != batch_size:
-                #             continue
-                #         data, target = batch_x.to(device), batch_y.to(device)
-                #         if ae_type == "VAE":
-                #             _, output, _, _ = trained_model(data)
-                #         else:
-                #             _, output = trained_model(data)
-                #         test_data.extend(output.detach().cpu().numpy().tolist())
-                #         test_labels.extend(target.detach().cpu().numpy().tolist())
                         
                 train_data = np.array(train_data)
                 train_labels = np.array(train_labels).ravel()
@@ -2748,8 +2655,7 @@ if p_Method == "ASD-ml-combine-two-centers-asd-vs-hc":
 
 # ***** Here to use machine learning algorithms with ComBat and without
 if p_Method == "ASD-ml" and p_mode == "whole" and run_combat == False:
-    # ml_method = "SVM"
-    # ml_method = "SVM"
+    
     output_dir = "ml_leave_one_site_out_combat_False_/ML/"
     file_name = "ml_leave_one_site_out_combat_False_" + ml_method + ".csv"
     print("results will be at:", output_dir + file_name)
