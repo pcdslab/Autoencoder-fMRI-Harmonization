@@ -59,16 +59,6 @@ sbatch script/run_experiments.sbatch
 - Ensure the data paths in `asd_harmonization_AEs.py` are correctly updated before running the script.
 - If you need to run additional experiments, you can modify the settings in `run_experiments.sbatch` or add new commands as needed.
 
-## File Structure
-
-```
-.
-├── asd_harmonization_AEs.py  # Main Python script for experiments
-├── script/
-│   └── run_experiments.sbatch  # SLURM script to run experiments
-├── data-files.md  # File containing details about the data directory
-├── notebooks/  # Folder containing Jupyter notebooks to plot results
-└── README.md  # Instructions to set up and run the code
 ```
 
 ## Contact
