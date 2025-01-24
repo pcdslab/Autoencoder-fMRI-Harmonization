@@ -40,63 +40,84 @@ The script file, `asd_harmonization_AEs.py`, now uses a configuration file to se
 - `PHENO_PATH`: Path to the phenotype (pheno) data.
 - `SAMPLE_PATH`: Path to the input sample file.
 
+
+## Usage
+
+```bash
+python asd_harmonization_AEs.py --p_method <p_method_value> [--ml_method <ml_method_value>] [--ae_type <ae_type_value>] [--run_combat] [--centers <center1,center2>] [--fold <fold_value>]
+```
+
+### Options
+
+- **`--p_method`** (Required)
+  Specifies the processing method for the pipeline.\
+  Example values: `ASD-Standalone-AE-10-fold`, `ASD-ml-combine-two-centers`, `ASD-ml-combine-two-centers-asd-vs-hc`, `ASD-ml`, `ASD-Standalone-AE`
+
+- **`--ml_method`** (Optional)
+  Specifies the machine learning method.\
+  Default: `RF`.\
+  Example values: `RF`, `SVM`, `NB`
+
+- **`--ae_type`** (Optional)
+  Specifies the autoencoder type to use.\
+  Default: `AE`.\
+  Example values: `AE`, `TAE`, `SAE`, `DAE`
+
+- **`--run_combat`** (Optional)
+  Enables ComBat harmonization in the pipeline.\
+  When included, the pipeline applies ComBat. If not specified, ComBat is not used. Please note this is used when ComBat is in the experiment
+
+- **`--centers`** (Optional)
+  Comma-separated list of two centers to include in the analysis.\
+  Default: `None`.\
+  Example: `Pitt,Yale`. Used for center classification experiments.
+
+- **`--fold`** (Optional)
+  Specifies the fold number for cross-validation experiments. It only used in proportional split experiments not in the LOSO experiments\
+  Default: 10.\
+  Example values: 5, 10
+---
+
 ## Running the Experiments
 
-### Example Command
-Below is an example command for running the main Python script:
+Below is an example command for running the paper experiments:
 
 1. Autoencoder harmonization using proportional split
 ```bash
 python asd_harmonization_AEs.py --p_method ASD-Standalone-AE-10-fold --ae_type AE --ml_method RF
 ```
-- `--p_method`: Specifies the processing method (e.g., ASD-Standalone-AE-10-fold).
-- `--ae_type`: Specifies the type of autoencoder to use (e.g., AE, TAE, SAE, DAE).
-- `--ml_method`: Specifies the machine learning method (e.g., RF, SVM, NB).
+---
 
 2. ML classification using with ComBat and without ComBat - proportional split
 ```bash
 python asd_harmonization_AEs.py --p_method ASD-ml --ml_method RF --run_combat
 ```
-- `--p_method`: Specifies the processing method (e.g., ASD-ml).
-- `--ml_method`: Specifies the machine learning method (e.g., RF, SVM, NB).
-- `--run_combat`: it will run combat if provided the arg, if it is not provided, it will not run_combat.
+---
 
-2. Center classification using an ML method, like RF, NB and SVM. It will take ASD of first-center, NT of second-center and vice versa
+3. Center classification using an ML method, like RF, NB and SVM. It will take ASD of first-center, NT of second-center and vice versa
 ```bash
 python asd_harmonization_AEs.py --p_method ASD-ml-combine-two-centers-asd-vs-hc --ml_method RF --run_combat --fold 5 --centers UCLA,KKI
 ```
-- `--p_method`: Specifies the processing method (e.g., ASD-ml-combine-two-centers-asd-vs-hc).
-- `--ml_method`: Specifies the machine learning method (e.g., RF).
-- `--run_combat`: it will run combat if provided the arg, if it is not provided, it will not run_combat.
-- `--fold`: Specifies the cross-validation fold.
-- `--centers`: Comma-separated list of two centers to include in the analysis.
+---
 
-3. Center classification using NT subjects only from two given centers, and the model will classify the center with and without ComBat. no need to pass --run_combat because the method will iterate through both of them
+4. Center classification using NT subjects only from two given centers, and the model will classify the center with and without ComBat. no need to pass --run_combat because the method will iterate through both of them
 ```bash
 python asd_harmonization_AEs.py --p_method ASD-ml-combine-two-centers --ml_method RF --run_combat --fold 5 --centers UCLA,KKI
 ```
-- `--p_method`: Specifies the processing method (e.g., ASD-ml-combine-two-centers-asd-vs-hc).
-- `--ml_method`: Specifies the machine learning method (e.g., RF).
-- `--run_combat`: it will run combat if provided the arg, if it is not provided, it will not run_combat.
-- `--fold`: Specifies the cross-validation fold.
-- `--centers`: Comma-separated list of two centers to include in the analysis.
+---
 
 4. Leave One Site Out experiment using AEs as harmonization method
 ```bash
 python asd_harmonization_AEs.py --p_method ASD-Standalone-AE --ae_type AE --ml_method RF
 ```
-- `--p_method`: Specifies the processing method (e.g., ASD-ml-combine-two-centers-asd-vs-hc).
-- `--ae_type`: Specifies the type of autoencoder to use (e.g., AE, TAE, SAE, DAE).
-- `--ml_method`: Specifies the machine learning method (e.g., RF, SVM, NB).
+---
 
 
 5. Leave One Site Out experiment with and without ComBat
 ```bash
 python asd_harmonization_AEs.py --p_method ASD-ml --ml_method RF --run_combat
 ```
-- `--p_method`: Specifies the processing method (e.g., ASD-ml).
-- `--ml_method`: Specifies the machine learning method (e.g., RF, SVM, NB).
-- `--run_combat`: it will run combat if provided the arg, if it is not provided, it will not run_combat.
+---
 
 ## Results and Analysis
 - Once the experiments are completed, Jupyter notebooks for result visualization and analysis can be found in the `notebooks` folder.
