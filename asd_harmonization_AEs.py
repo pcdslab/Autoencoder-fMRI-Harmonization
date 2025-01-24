@@ -2657,6 +2657,8 @@ if p_Method == "ASD-ml-combine-two-centers-asd-vs-hc":
 if p_Method == "ASD-ml" and p_mode == "whole" and run_combat == False:
     
     output_dir = "ml_leave_one_site_out_combat_False_/ML/"
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
     file_name = "ml_leave_one_site_out_combat_False_" + ml_method + ".csv"
     print("results will be at:", output_dir + file_name)
 
