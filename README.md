@@ -17,6 +17,7 @@ If you use this framework in your work, please cite the associated publications.
 ### Install Anaconda
 [Step by Step Guide to Install Anaconda](https://docs.anaconda.com/anaconda/install/)
 
+
 ### Fork the Repository
 - Fork this repository to your own account.
 - Clone your fork to your machine.
@@ -127,5 +128,5 @@ python asd_harmonization_AEs.py --p_method ASD-ml --ml_method RF --run_combat
 This project uses the ComBat harmonization method, available at [https://github.com/Jfortin1/ComBatHarmonization](https://github.com/Jfortin1/ComBatHarmonization).
 
 ## Contact
-If you have any questions or encounter any issues, please reach out to the repository maintainer at [falmu027@fiu.edu](mailto:falmu027@fiu.edu).
+If you have any questions or encounter any issues, please reach out at [falmu027@fiu.edu](mailto:falmu027@fiu.edu).
 
