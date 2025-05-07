@@ -2914,4 +2914,150 @@ if p_Method == "ASD-ml" and p_mode == "whole" and run_combat:
     print(np.mean(np.array(overall_result), axis=0).tolist())
     results.close()
     sys.exit(0)
-    
+if p_Method == "ASD-ml-combine-two-centers-permutation-test":
+
+    print("p_Method:", p_Method)
+    print("centers:", centers)
+
+    output_dir = "ps_center_classification_comabt_none/"
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    file_name = "ml_method_" + ml_method + "_" + "_".join(centers) + ".csv"
+    print("results will be at:", output_dir + file_name)
+
+    results = open(output_dir + file_name, "a")
+    writer = csv.writer(results)
+
+    modes = [
+        "hc-center-as-class",
+        # "all",
+        # "first-asd",
+        # "second-asd",
+        # "asd-center-as-class",
+    ]
+    # centers = ['CMU', 'OHSU']
+    samples = pd.read_csv(path)
+
+    center_text = "_".join(centers)
+    num_corr = len(all_corr[flist[0]][0])
+    print("num_corr:  ", num_corr)
+
+    first_run = True
+    for mode in modes:
+        print("run mode:", mode)
+        flist, y_arr = get_subjects(samples, centers, mode=mode)
+
+        kk = 0
+        crossval_res_kol_kol = []
+
+        if first_run:
+            fieldnames = [
+                "iter",
+                "centers",
+                "mode",
+                "use_ComBat",
+                "method",
+                "fold",
+                "train_size",
+                "test_size",
+                "acc",
+                "sens",
+                "sepf",
+            ]
+            writer = csv.DictWriter(results, fieldnames=fieldnames)
+            writer.writeheader()
+            first_run = False
+
+        for run_combat in [False, True][:1]:
+            print("========================")
+            print("run_combat: ", run_combat, "\n")
+            all_rp_res = []
+            overall_result = []
+            # Permutation test
+            null_distribution = []
+            for rp in range(1000):
+                res = []
+                # kf = StratifiedKFold(n_splits=p_fold, shuffle=True, random_state=0)
+                kf = StratifiedKFold(n_splits=p_fold)
+                shuffled_labels = np.random.permutation(y_arr)
+                for kk, (train_index, test_index) in enumerate(kf.split(flist, shuffled_labels)):
+                    train_samples, test_samples = flist[train_index], flist[test_index]
+                    train_y, test_y = shuffled_labels[train_index], shuffled_labels[test_index]
+                    print("train_samples: ", len(train_samples))
+                    print("test_samples: ", len(test_samples))
+                    verbose = True if (kk == 0) else False
+
+                    if run_combat:
+                        scanners, estimator = getEstimator(
+                            all_corr, train_samples, df_labels
+                        )
+                        new_data = update_data(
+                            all_corr,
+                            num_corr,
+                            scanners,
+                            estimator,
+                            np.concatenate((train_samples, test_samples)),
+                        )
+                    else:
+                        estimator = None
+                        scanners = None
+                        new_data = all_corr
+                    train_data = []
+                    train_labels = []
+                    test_data = []
+                    test_labels = []
+
+                    for j, i in enumerate(train_samples):
+                        train_data.append(new_data[i][0])
+                        train_labels.append(train_y[j])
+
+                    for j, i in enumerate(test_samples):
+                        test_data.append(new_data[i][0])
+                        test_labels.append(test_y[j])
+
+                    if ml_method == "NB":
+                        clf = GaussianNB()
+                    if ml_method == "SVM":
+                        # Apply PCA
+                        # You can adjust n_components based on your requirement
+                        pca = PCA(n_components=2)
+                        train_data = pca.fit_transform(train_data)
+                        test_data = pca.transform(test_data)
+                        clf = SVC(gamma="auto")
+
+                    if ml_method == "RF":
+                        clf = RandomForestClassifier(n_estimators=100)
+
+                    clf.fit(train_data, train_labels)
+                    pr = clf.predict(test_data)
+
+                    # print("test_labels:", test_labels)
+                    # print("pr:", pr)
+                    accuracy, sensitivity, specificty = confusion(test_labels, pr)
+                    null_distribution.append(accuracy)
+                    print("fold:", kk)
+                    print(accuracy, sensitivity, specificty)
+                    res.append(accuracy)
+                #     writer.writerow(
+                #         {
+                #             "iter": rp,
+                #             "centers": center_text,
+                #             "use_ComBat": run_combat,
+                #             "method": ml_method,
+                #             "fold": kk,
+                #             "train_size": len(train_samples),
+                #             "test_size": len(test_samples),
+                #             "acc": accuracy,
+                #             "sens": sensitivity,
+                #             "sepf": specificty,
+                #         }
+                #     )
+                
+                print("repeat: ", rp)
+                print(np.mean(np.array(res)))
+                # overall_result.append(np.mean(res, axis=0).tolist())
+            print("---------------Result of repeating 1000 times-------------------")
+            print(np.mean(np.array(null_distribution)))
+    # results.close()
+    sys.exit(0)
