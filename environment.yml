@@ -1,4 +1,4 @@
-name: fmriharm
+name: asd_env
 channels:
   - conda-forge
   - defaults
