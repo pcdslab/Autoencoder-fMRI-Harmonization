@@ -1,6 +1,6 @@
 # ASD Harmonization
 
-## Overcoming Site Variability in Multisite fMRI Studies: An Autoencoder Framework for Enhanced Generalizability of Machine Learning Models
+## [Overcoming Site Variability in Multisite fMRI Studies: An Autoencoder Framework for Enhanced Generalizability of Machine Learning Models](https://link.springer.com/article/10.1007/s12021-025-09746-1)
 
 ### Abstract
 Multisite functional magnetic resonance imaging (fMRI) studies are vital for advancing our understanding of brain disorders. However, site variability poses a significant challenge to the generalizability of machine learning models. In this work, we propose an autoencoder (AE) framework to mitigate site-specific variations and improve model performance across diverse datasets. By leveraging AEs, we demonstrate enhanced generalizability and robustness in ASD classification tasks. This framework is evaluated on multisite fMRI data, highlighting its ability to overcome site variability and set a new standard for harmonization techniques in neuroimaging studies.
@@ -9,7 +9,7 @@ Multisite functional magnetic resonance imaging (fMRI) studies are vital for adv
 
 If you use this code or models in your research, please cite our paper:
 
-[Overcoming Site Variability in Multisite fMRI Studies: An Autoencoder Framework for Enhanced Generalizability of Machine Learning Models](https://link.springer.com/article/10.1007/s12021-025-09746-1)
+Almuqhim, F., Saeed, F. Overcoming Site Variability in Multisite fMRI Studies: an Autoencoder Framework for Enhanced Generalizability of Machine Learning Models. Neuroinform 23, 46 (2025). https://doi.org/10.1007/s12021-025-09746-1
 
 ```bibtex
 @article{almuqhim_overcoming_2025,
