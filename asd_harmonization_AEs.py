@@ -51,7 +51,6 @@ np.random.seed(seed_value)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(device)
 
-
 ap = argparse.ArgumentParser()
 ap.add_argument("-p", "--path", type=str, default=None, help="path to samples file")
 ap.add_argument("-c", "--centers", type=str, default=None, help="centers to run")

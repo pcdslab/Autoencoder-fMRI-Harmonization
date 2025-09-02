@@ -33,6 +33,11 @@ conda env create --file environment.yml
 conda activate asd_env
 ```
 
+### Install Pytorch and pyprind
+```bash
+pip install pyprind
+pip install torch==1.13.1+cu116 torchvision==0.14.1+cu116 torchaudio==0.13.1+cu116 --extra-index-url https://download.pytorch.org/whl/cu116
+```
 
 ## Data Preparation
 The script file, `asd_harmonization_AEs.py`, now uses a configuration file to set the paths for the required data. Update the `config.ini` file with the following paths:
@@ -46,6 +51,15 @@ The script file, `asd_harmonization_AEs.py`, now uses a configuration file to se
 
 ```bash
 python asd_harmonization_AEs.py --p_method <p_method_value> [--ml_method <ml_method_value>] [--ae_type <ae_type_value>] [--run_combat] [--centers <center1,center2>] [--fold <fold_value>]
+```
+
+## Run trained models
+You can download the trained models and data splits from the [latest release](https://github.com/pcdslab/Autoencoder-fMRI-Harmonization/releases).
+
+Then, you can run the following command to run TAE for proportional split:
+
+```bash
+python run_trained_harmonization_AEs.py --p_method ASD-Standalone-AE-10-fold --model_dir models/ --ae_type TAE
 ```
 
 ### Options
