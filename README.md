@@ -30,7 +30,7 @@ conda env create --file environment.yml
 
 ### Activate the Environment
 ```bash
-conda activate asd_env
+conda activate ae_env
 ```
 
 ### Install Pytorch and pyprind
