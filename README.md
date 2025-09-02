@@ -12,9 +12,9 @@ If you use this code or models in your research, please cite our paper:
 [Overcoming Site Variability in Multisite fMRI Studies: An Autoencoder Framework for Enhanced Generalizability of Machine Learning Models](https://link.springer.com/article/10.1007/s12021-025-09746-1)
 
 ```bibtex
-@article{Almuqhim2025AEfMRI,
-  title   = {Overcoming Site Variability in Multisite fMRI Studies: An Autoencoder Framework for Enhanced Generalizability of Machine Learning Models},
-  volume = {23},
+@article{almuqhim_overcoming_2025,
+	title   = {Overcoming Site Variability in Multisite fMRI Studies: An Autoencoder Framework for Enhanced Generalizability of Machine Learning Models},
+	volume = {23},
 	issn = {1559-0089},
 	url = {https://doi.org/10.1007/s12021-025-09746-1},
 	doi = {10.1007/s12021-025-09746-1},
